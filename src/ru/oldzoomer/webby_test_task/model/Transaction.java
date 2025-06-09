@@ -1,4 +1,4 @@
-package model;
+package ru.oldzoomer.webby_test_task.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

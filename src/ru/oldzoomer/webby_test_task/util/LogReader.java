@@ -1,4 +1,4 @@
-package util;
+package ru.oldzoomer.webby_test_task.util;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -45,11 +45,12 @@ public class LogProcessor {
         for (Map.Entry<String, Transaction> entry : transactionsByUser.entrySet()) {
             String user = entry.getKey();
             Transaction transaction = entry.getValue();
+            String targetUser = transaction.getTargetUser();
 
             // Объединение записей в рамках каждого пользователя
             if (!user.equals(transaction.getUsername())) {
-                Transaction reverseTransaction = new Transaction(user, transaction.getTimestamp(), transaction.getAmount(), user);
-                transactionsByUser.put(user, reverseTransaction);
+                Transaction reverseTransaction = new Transaction(targetUser, transaction.getTimestamp(), transaction.getAmount(), user);
+                transactionsByUser.put(targetUser, reverseTransaction);
             }
 
             // Сортировка записей по дате лога
@@ -58,7 +59,7 @@ public class LogProcessor {
 
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(resultFolder + "/" + user + ".log", true))) {
                 for (Transaction t : sortedTransactions) {
-                    writer.write("[" + t.getTimestamp() + "] " + t.getUsername() + " " + t.getOperation());
+                    writer.write("[" + t.getTimestamp() + "] " + targetUser + " " + t.getOperation());
                     writer.newLine();
                 }
             }
@@ -68,13 +69,13 @@ public class LogProcessor {
             for (Transaction t : sortedTransactions) {
                 if (t.getOperation().equals("balance inquiry")) {
                     balance += t.getAmount();
-                } else if (t.getOperation().equals("transferred") || t.getOperation().equals("recived")) {
+                } else if (t.getOperation().equals("transferred") || t.getOperation().equals("received")) {
                     balance -= t.getAmount();
                 }
             }
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(resultFolder + "/" + user + ".log", true))) {
-                writer.write("[" + LocalDateTime.now() + "] " + user + " final balance " + String.format("%.2f", balance) + " ");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(resultFolder + "/" + targetUser + ".log", true))) {
+                writer.write("[" + LocalDateTime.now() + "] " + targetUser + " final balance " + String.format("%.2f", balance) + " ");
             }
         }
     }

@@ -3,9 +3,9 @@ package util;
 import model.Transaction;
 
 import java.io.BufferedReader;
-import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.io.BufferedWriter;
@@ -57,7 +57,7 @@ public class LogProcessor {
             List<Transaction> sortedTransactions = new ArrayList<>(transactionsByUser.values());
             sortedTransactions.sort(null);
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(resultFolder + "/" + user + ".log", true))) {
+            try (BufferedWriter writer = Files.newBufferedWriter(resultFolder.resolve(targetUser + ".log"), StandardOpenOption.APPEND)) {
                 for (Transaction t : sortedTransactions) {
                     writer.write("[" + t.getTimestamp() + "] " + targetUser + " " + t.getOperation());
                     writer.newLine();
@@ -74,7 +74,7 @@ public class LogProcessor {
                 }
             }
 
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(resultFolder + "/" + targetUser + ".log", true))) {
+            try (BufferedWriter writer = Files.newBufferedWriter(resultFolder.resolve(targetUser + ".log"), StandardOpenOption.APPEND)) {
                 writer.write("[" + LocalDateTime.now() + "] " + targetUser + " final balance " + String.format("%.2f", balance) + " ");
             }
         }
